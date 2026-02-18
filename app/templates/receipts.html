@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Receipts</h2>
+<form method="post" class="inline-form">
+  <input name="file_name" placeholder="Receipt file name" required>
+  <input name="mime_type" placeholder="MIME type">
+  <input name="issued_on" type="date">
+  <input name="total_amount" type="number" step="0.01" min="0" placeholder="Total amount">
+  <button type="submit">Add receipt</button>
+</form>
+<table>
+  <thead><tr><th>File</th><th>Type</th><th>Issued On</th><th>Total</th></tr></thead>
+  <tbody>
+    {% for receipt in receipts %}
+    <tr><td>{{ receipt.file_name }}</td><td>{{ receipt.mime_type or '-' }}</td><td>{{ receipt.issued_on or '-' }}</td><td>${{ '%.2f'|format(receipt.total_amount or 0) }}</td></tr>
+    {% else %}
+    <tr><td colspan="4">No receipts yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

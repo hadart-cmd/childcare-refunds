@@ -1,130 +1,127 @@
 # Childcare Refund Manager
 
-A practical app concept for managing therapy treatment refunds across multiple children and therapists.
+Childcare Refund Manager is a FastAPI web application for organizing therapy payments and reimbursement progress across children, therapists, receipts, and claims.
 
-## Why this is a great fit
+It is designed for a practical workflow:
+1. A treatment occurs.
+2. A receipt is collected.
+3. A claim is submitted.
+4. Refund progress is tracked until payment arrives.
 
-Your problem has clear, structured data and a repeatable workflow:
+---
 
-1. A treatment happens.
-2. You get a receipt (sometimes covering multiple treatments).
-3. You submit to insurance/funder.
-4. You track refund progress.
+## Application overview
 
-That makes this ideal for an application with reporting, reminders, and OCR-assisted data entry.
+### Core modules
 
-## Core entities
+- **Web app (`app/main.py`)**
+  - HTML pages for dashboard, children, therapists, receipts, treatments, and claims.
+  - Form-based creation and updates.
+  - Auto-creation of one refund claim per treatment.
 
-- **Children**: each child profile.
-- **Therapists**: providers linked to one or more children.
-- **Receipts**: uploaded file (PDF/image) that can contain multiple treatment lines.
-- **Treatments**: date, amount, child, therapist, and receipt linkage.
-- **Refund claims**: grouped submissions and status tracking.
+- **Data model (`app/models.py`)**
+  - `Child`, `Therapist`, `Receipt`, `Treatment`, `RefundClaim`.
+  - `RefundStatus` enum: `NOT_ISSUED`, `ISSUED`, `REFUND_RECEIVED`.
 
-## Suggested refund status model
+- **Database wiring (`app/db.py`)**
+  - Uses `DATABASE_URL` env var.
+  - Defaults to SQLite for local development.
+  - Accepts PostgreSQL URLs for deployment.
 
-Use a strict enum to prevent confusion:
+- **Frontend templates (`app/templates/*`) + styles (`app/static/styles.css`)**
+  - Simple, readable operational UI.
 
-- `NOT_ISSUED` (prepared but not submitted)
-- `ISSUED` (submitted to insurer/funder)
-- `REFUND_RECEIVED` (money received)
+---
 
-For the MVP schema, each treatment has one refund-claim record so status progression remains simple and auditable.
+## Feature walkthrough
 
-Optional additions:
+### 1) Dashboard
 
-- `PARTIALLY_REFUNDED`
-- `REJECTED`
+Shows quick metrics:
+- Outstanding claim count
+- Total paid (from treatments)
+- Total refunded (from claims)
+- Recent claims table
 
-## MVP feature set
+### 2) Children
 
-### 1) Data management
+Create and list child profiles with optional date of birth.
 
-- Create/edit children and therapists.
-- Record treatments manually.
-- Attach each treatment to a receipt.
-- Group multiple treatments from one receipt.
+### 3) Therapists
 
-### 2) Receipt upload + extraction
+Create and list provider records, including specialty and provider number.
 
-- Upload PDF/JPG/PNG receipts.
-- Parse both printed and handwritten receipt text (where legible).
-- OCR/HTR extracts:
-  - therapist name
-  - date(s)
-  - line-item amount(s)
-  - total amount
-- User reviews and confirms extracted data before saving.
+### 4) Receipts
 
-### 3) Refund tracking
+Record receipt metadata (file name, type, issue date, total amount).
 
-- Mark status (`NOT_ISSUED` → `ISSUED` → `REFUND_RECEIVED`).
-- Keep a single claim timeline per treatment to avoid duplicate status records.
-- Store:
-  - claim submission date
-  - expected amount
-  - received amount/date
-  - notes/reference number
+### 5) Treatments
 
-### 4) Dashboard & reporting
+Add treatments linked to a child and therapist, with optional receipt linkage.
+Each new treatment automatically creates a related refund claim.
 
-- Outstanding claims by child/therapist.
-- Total paid vs refunded per month.
-- Filters by date range and status.
+### 6) Claims
 
-## Recommended architecture
+Update reimbursement progress for each treatment claim:
+- Status
+- Submission date
+- Received amount/date
+- Reference number and notes
 
-- **Frontend**: React + TypeScript
-- **Backend**: FastAPI (Python)
-- **Database**: PostgreSQL
-- **File storage**: S3-compatible bucket or local object storage
-- **OCR**:
-  - baseline: Tesseract + invoice parsing rules (printed text)
-  - handwritten-capable: cloud OCR/HTR (Google Vision, AWS Textract AnalyzeExpense, or Azure Document Intelligence)
+---
 
-## OCR strategy (important)
+## Installation and local run
 
-Receipt formats vary a lot. A robust approach is:
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[dev]
+uvicorn app.main:app --reload
+```
 
-1. OCR text extraction.
-2. Rule-based parser (dates, currencies, provider name candidates).
-3. Confidence scoring for each extracted field, including handwriting confidence.
-4. If handwriting confidence is low, route to a manual review queue.
-5. Human confirmation UI before final save.
+Open: <http://localhost:8000>
 
-This keeps automation high while avoiding silent mistakes.
+Health endpoint:
 
-## Suggested roadmap
+```bash
+curl http://localhost:8000/healthz
+```
 
-### Phase 1 (1-2 weeks)
+---
 
-- CRUD for children, therapists, receipts, treatments.
-- Refund status tracking.
-- Basic dashboard and filters.
+## Testing
 
-### Phase 2 (1-2 weeks)
+```bash
+pytest
+```
 
-- OCR upload pipeline + manual confirmation screen.
-- Duplicate detection (same date/amount/provider).
+If dependencies are unavailable in your environment, you can still run a syntax check:
 
-### Phase 3
+```bash
+python -m compileall app tests
+```
 
-- CSV export for accountant/insurance.
-- Email reminders for pending claims.
-- Mobile-friendly capture flow (photo to receipt).
+---
 
-## Security and privacy checklist
+## Deployment
 
-Because this includes children and health-adjacent data:
+You can deploy locally, with Docker, or behind a reverse proxy.
 
-- Role-based authentication.
-- Encrypt files at rest.
-- Audit log for edits/status changes.
-- Backup and restore plan.
-- Keep only required personal data.
+- Full deployment guide: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+- Dockerfile included at repo root.
 
-## Practical recommendation
+---
 
-Yes — this is an excellent app idea and very feasible.
+## User guide
 
-The biggest win will come from **OCR/HTR + confirmation workflow** plus **clean status tracking** across children and therapists. Handwritten fields can be parsed as well, but should always use confidence scoring and review fallback. If you want, the next step is to scaffold the backend + database schema and deliver a clickable MVP quickly.
+For a full task-by-task operating guide (daily workflow, tips, troubleshooting):
+
+- [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)
+
+---
+
+## Database notes
+
+- Local development uses SQLite by default.
+- A PostgreSQL-oriented MVP schema draft is also provided in [`schema.sql`](schema.sql).
+- For production, prefer PostgreSQL, authentication, audit logs, encrypted backups, and secure object storage for receipt files.

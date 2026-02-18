@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Children</h2>
+<form method="post" class="inline-form">
+  <input name="full_name" placeholder="Full name" required>
+  <input name="date_of_birth" type="date">
+  <button type="submit">Add child</button>
+</form>
+<table>
+  <thead><tr><th>Name</th><th>Date of birth</th></tr></thead>
+  <tbody>
+    {% for child in children %}
+    <tr><td>{{ child.full_name }}</td><td>{{ child.date_of_birth or '-' }}</td></tr>
+    {% else %}
+    <tr><td colspan="2">No children yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
