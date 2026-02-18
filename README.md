@@ -48,7 +48,8 @@ Optional additions:
 ### 2) Receipt upload + extraction
 
 - Upload PDF/JPG/PNG receipts.
-- OCR extracts:
+- Parse both printed and handwritten receipt text (where legible).
+- OCR/HTR extracts:
   - therapist name
   - date(s)
   - line-item amount(s)
@@ -78,8 +79,8 @@ Optional additions:
 - **Database**: PostgreSQL
 - **File storage**: S3-compatible bucket or local object storage
 - **OCR**:
-  - baseline: Tesseract + invoice parsing rules
-  - improved: cloud OCR (Google Vision/AWS Textract/Azure Form Recognizer)
+  - baseline: Tesseract + invoice parsing rules (printed text)
+  - handwritten-capable: cloud OCR/HTR (Google Vision, AWS Textract AnalyzeExpense, or Azure Document Intelligence)
 
 ## OCR strategy (important)
 
@@ -87,8 +88,9 @@ Receipt formats vary a lot. A robust approach is:
 
 1. OCR text extraction.
 2. Rule-based parser (dates, currencies, provider name candidates).
-3. Confidence scoring for each extracted field.
-4. Human confirmation UI before final save.
+3. Confidence scoring for each extracted field, including handwriting confidence.
+4. If handwriting confidence is low, route to a manual review queue.
+5. Human confirmation UI before final save.
 
 This keeps automation high while avoiding silent mistakes.
 
@@ -125,4 +127,4 @@ Because this includes children and health-adjacent data:
 
 Yes — this is an excellent app idea and very feasible.
 
-The biggest win will come from **OCR + confirmation workflow** plus **clean status tracking** across children and therapists. If you want, the next step is to scaffold the backend + database schema and deliver a clickable MVP quickly.
+The biggest win will come from **OCR/HTR + confirmation workflow** plus **clean status tracking** across children and therapists. Handwritten fields can be parsed as well, but should always use confidence scoring and review fallback. If you want, the next step is to scaffold the backend + database schema and deliver a clickable MVP quickly.
