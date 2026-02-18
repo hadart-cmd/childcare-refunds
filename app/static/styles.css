@@ -1,0 +1,20 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body { margin: 0; background: #f8fafc; color: #1f2937; }
+header { background: #0f172a; color: white; padding: 1rem 2rem; }
+header h1 { margin: 0; font-size: 1.4rem; }
+nav { margin-top: 0.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+nav a { color: #bfdbfe; text-decoration: none; }
+main { padding: 1.5rem 2rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stats article { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgb(0 0 0 / 8%); }
+.stats p { font-size: 1.5rem; margin: 0; }
+form.inline-form { margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+form.inline-form.vertical { flex-direction: column; min-width: 220px; }
+input, select, button { padding: 0.45rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; }
+button { background: #2563eb; color: white; border: none; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 2px rgb(0 0 0 / 8%); }
+th, td { text-align: left; padding: 0.6rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; }

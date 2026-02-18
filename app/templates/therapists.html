@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Therapists</h2>
+<form method="post" class="inline-form">
+  <input name="full_name" placeholder="Full name" required>
+  <input name="specialty" placeholder="Specialty">
+  <input name="provider_number" placeholder="Provider #">
+  <button type="submit">Add therapist</button>
+</form>
+<table>
+  <thead><tr><th>Name</th><th>Specialty</th><th>Provider #</th></tr></thead>
+  <tbody>
+    {% for therapist in therapists %}
+    <tr><td>{{ therapist.full_name }}</td><td>{{ therapist.specialty or '-' }}</td><td>{{ therapist.provider_number or '-' }}</td></tr>
+    {% else %}
+    <tr><td colspan="3">No therapists yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

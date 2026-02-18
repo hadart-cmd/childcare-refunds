@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Treatments</h2>
+<form method="post" class="inline-form">
+  <select name="child_id" required>
+    <option value="">Child</option>
+    {% for child in children %}<option value="{{ child.id }}">{{ child.full_name }}</option>{% endfor %}
+  </select>
+  <select name="therapist_id" required>
+    <option value="">Therapist</option>
+    {% for therapist in therapists %}<option value="{{ therapist.id }}">{{ therapist.full_name }}</option>{% endfor %}
+  </select>
+  <select name="receipt_id">
+    <option value="">Receipt (optional)</option>
+    {% for receipt in receipts %}<option value="{{ receipt.id }}">{{ receipt.file_name }}</option>{% endfor %}
+  </select>
+  <input name="treatment_date" type="date" required>
+  <input name="amount" type="number" step="0.01" min="0" placeholder="Amount" required>
+  <input name="notes" placeholder="Notes">
+  <button type="submit">Add treatment</button>
+</form>
+<table>
+  <thead><tr><th>Date</th><th>Child</th><th>Therapist</th><th>Amount</th><th>Notes</th></tr></thead>
+  <tbody>
+    {% for treatment in treatments %}
+    <tr>
+      <td>{{ treatment.treatment_date }}</td>
+      <td>{{ child_map[treatment.child_id|string] }}</td>
+      <td>{{ therapist_map[treatment.therapist_id|string] }}</td>
+      <td>${{ '%.2f'|format(treatment.amount) }}</td>
+      <td>{{ treatment.notes or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No treatments yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

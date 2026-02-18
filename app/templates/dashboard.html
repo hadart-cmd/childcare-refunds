@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="stats">
+  <article><h3>Outstanding Claims</h3><p>{{ outstanding }}</p></article>
+  <article><h3>Total Paid</h3><p>${{ '%.2f'|format(total_paid) }}</p></article>
+  <article><h3>Total Refunded</h3><p>${{ '%.2f'|format(total_refunded) }}</p></article>
+</section>
+
+<h2>Recent Claims</h2>
+<table>
+  <thead><tr><th>Claim ID</th><th>Status</th><th>Expected</th><th>Received</th></tr></thead>
+  <tbody>
+    {% for claim in claims %}
+      <tr>
+        <td>{{ claim.id }}</td>
+        <td>{{ claim.status }}</td>
+        <td>${{ '%.2f'|format(claim.expected_refund_amount or 0) }}</td>
+        <td>${{ '%.2f'|format(claim.received_amount or 0) }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4">No claims yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
