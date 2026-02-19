@@ -12,6 +12,36 @@ It is designed for a practical workflow:
 
 ## Application overview
 
+### Technical stack (2-line explanations)
+
+- **Python 3.11+**
+  - The application runs on modern Python and uses standard typing and dataclass-style models.
+  - Python keeps the codebase easy to maintain for small operational teams.
+
+- **FastAPI**
+  - FastAPI powers the HTTP server, routing, form handling, and lifecycle hooks.
+  - It gives clear route definitions while staying lightweight for internal tools.
+
+- **SQLModel**
+  - SQLModel defines database tables as Python classes and handles query execution.
+  - This keeps business entities and persistence logic in one clear model layer.
+
+- **Jinja2 templates + CSS**
+  - Server-rendered templates produce pages for dashboard and CRUD workflows.
+  - Plain CSS keeps the interface simple, fast, and readable for daily operations.
+
+- **SQLite / PostgreSQL**
+  - SQLite is the default for local use, requiring almost zero setup.
+  - PostgreSQL is supported for production-grade reliability and scaling.
+
+- **Uvicorn (ASGI server)**
+  - Uvicorn serves the FastAPI app in local runs and container deployments.
+  - It is a high-performance async server with a minimal operational footprint.
+
+- **Docker**
+  - Docker packages the runtime and dependencies into a repeatable deploy artifact.
+  - This reduces environment drift between local, staging, and production setups.
+
 ### Core modules
 
 - **Web app (`app/main.py`)**
